@@ -42,6 +42,7 @@ export function LoginForm() {
       password: values.password,
       redirect: false,
     });
+    console.log(res)
 
     if (res?.ok) {
       router.push("/admin");
