@@ -13,6 +13,7 @@ export const options: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        console.log({credentials})
         try {
           if (!credentials?.email || !credentials.password) {
             return null;
@@ -55,4 +56,5 @@ export const options: AuthOptions = {
       return session;
     },
   },
+
 };

@@ -14,7 +14,8 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
-
+import { getSession } from "next-auth/react"
+import { createTickets } from "@/services/ticket-in-client";
 
 const formSchema = z.object({
     title: z.string().min(1, "El título es obligatorio"),
@@ -47,35 +48,20 @@ function CreateTicketForm() {
 
         /* Al crear un tiket, se asigna el status a "Open", la area_id y la categoria_id */
         try {
-            const res = await fetch("http://localhost:8000/api/tickets", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json', // Si estás enviando JSON
-                    'Accept': 'application/json', // Acepta respuestas en JSON
-                    'Authorization': 'Bearer 6|ghoo52YXhaVtU5e5wqcoJ7pEJ8AX18GtkqNMTxGsf8f97d24'
-                },
-                credentials: 'include', // Incluye cookies de sesión
-                body: JSON.stringify({
-                    title: values.title,
-                    description: values.description,
-                    category_id: values.category_id,
-                    area_id: "1",
-                    priority: values.priority,
-                    status: "open"
-                }),
-            });
-    
-    
-    
+            const session = await getSession();
+            console.log(session)
+            
+            const res =await  createTickets(values)
+
             if (!res.ok) {
-    
+
                 const json = await res.json();
                 console.log(json)
             }
-    
+
             const json = await res.json();
             console.log("respuesta", json)
-    
+
             toast({
                 title: "Éxito",
                 description: "El ticket se creó correctamente.",
@@ -99,7 +85,7 @@ function CreateTicketForm() {
                         name="title"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Username</FormLabel>
+                                <FormLabel>Titulo</FormLabel>
                                 <FormControl>
                                     <Input type="text" placeholder="shadcn" {...field} />
                                 </FormControl>

@@ -9,6 +9,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { getTickets } from "@/lib/services/tickets";
 
 const tickets = [
     {
@@ -56,7 +57,7 @@ const tickets = [
 ]
 
 
-async function GetTikets() {
+/* async function GetTikets() {
 
     try {
         const response = await fetch("http://localhost:8000/api/tickets",{
@@ -73,13 +74,14 @@ async function GetTikets() {
     }
 
 }
-
+ */
 
 
 
 async function Tickets() {
 
-    const data =await GetTikets();
+    const data =await getTickets();
+    console.log(data)
     console.log(data)
     
     return (
@@ -96,7 +98,7 @@ async function Tickets() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                {data.data.map((ticket,index) => (
+                {data?.data?.map((ticket,index) => (
                         <TableRow key={index}>
                             <TableCell className="font-medium">{ticket.title}</TableCell>
                             <TableCell>{ticket.description}</TableCell>

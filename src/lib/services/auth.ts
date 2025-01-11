@@ -3,6 +3,7 @@
 import { baseUrl } from "./baseUrl";
 
 export const login = async (email: string, password: string) => {
+  console.log(`${baseUrl}/login`)
   const res = await fetch(`${baseUrl}/login`, {
     method: "POST",
     headers: {
@@ -12,6 +13,6 @@ export const login = async (email: string, password: string) => {
     body: JSON.stringify({ email, password }),
   });
   const json = await res.json();
-  console.log({ data: json });
+  console.log({ data: json },"entro aqui----------------");
   return json;
 };

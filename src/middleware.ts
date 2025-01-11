@@ -1,25 +1,66 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-const secret = process.env.NEXTAUTH_SECRET;
+// Rutas que serán públicas
+const publicRoutes = [
+  "/auth/login",
+  "/auth/register",
+  "/api/auth",
+  "/",                // Homepage
+  "/about",           // Ejemplo de página pública
+  "/contact",         // Ejemplo de página pública
+];
+
+// Rutas que comienzan con estos prefijos serán públicas
+const publicPathPrefixes = [
+  "/_next",          // Archivos del sistema Next.js
+  "/images",         // Ejemplo para archivos estáticos
+  "/favicon",        // Favicon y relacionados
+  "/api/auth",       // Endpoints de autenticación
+];
 
 export async function middleware(req: NextRequest) {
-  const token = await getToken({ req, secret });
+  const { pathname } = req.nextUrl;
+  
+  // Verificar si la ruta actual es pública
+  const isPublicRoute = publicRoutes.includes(pathname) ||
+    publicPathPrefixes.some(prefix => pathname.startsWith(prefix));
 
-  // Verifica si la solicitud es a una ruta protegida
-  const isAdminRoute = req.nextUrl.pathname.startsWith("/admin");
-
-  if (isAdminRoute) {
-    if (!token) {
-      return NextResponse.redirect("/auth/login");
-    }
+  if (isPublicRoute) {
+    return NextResponse.next();
   }
 
-  // Si todo está bien, continúa con la solicitud
+  // Verificar el token de autenticación
+  const token = await getToken({ 
+    req, 
+    secret: process.env.NEXTAUTH_SECRET 
+  });
+
+  // Si no hay token, redirigir al login
+  if (!token) {
+    // Guardar la URL original para redirigir después del login
+    const url = new URL('/auth/login', req.url);
+    url.searchParams.set('callbackUrl', encodeURI(pathname));
+    return NextResponse.redirect(url);
+  }
+
+  // Opcional: Verificar roles específicos
+  if (pathname.startsWith('/admin') && token.role !== 'admin') {
+    return NextResponse.redirect(new URL('/unauthorized', req.url));
+  }
+
   return NextResponse.next();
 }
 
-// Aplica el middleware a las rutas que empiezan con `/admin`
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: [
+    /*
+     * Coincide con todas las rutas excepto:
+     * 1. /api/auth* (endpoints de autenticación)
+     * 2. /_next/static (archivos estáticos)
+     * 3. /_next/image (optimización de imágenes)
+     * 4. /favicon.ico (favicon)
+     */
+    '/((?!api/auth|_next/static|_next/image|favicon.ico).*)',
+  ],
 };
