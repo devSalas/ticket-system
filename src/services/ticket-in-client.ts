@@ -2,7 +2,8 @@ import { baseUrlClient } from "@/lib/services/baseUrl";
 import { getSession } from "next-auth/react"
 
 export const createTickets = async (newTicket: any) => {
-    const session = await getSession();
+    try {
+      const session = await getSession();
     console.log(newTicket, `${baseUrlClient}/tickets`)
     const { title, description, category_id, priority, status } = newTicket;
     const res = await fetch(`${baseUrlClient}/tickets`, {
@@ -24,5 +25,8 @@ export const createTickets = async (newTicket: any) => {
   
     });
     return res;
+    } catch (error) {
+      return false
+    }
     
   }

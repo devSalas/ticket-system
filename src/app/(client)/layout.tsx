@@ -6,14 +6,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         <Sidebar />
         <div className="grow ">
             <div className="w-full h-full flex flex-col gap-y-[2px]">
-                <header>
-                    <div>
-                        <div>Dashboard</div>
-                    </div>
-                    <div>
-                        <Input></Input>
-                    </div>
-                </header>
+
                 {children}
             </div>
         </div>

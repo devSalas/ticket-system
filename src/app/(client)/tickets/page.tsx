@@ -80,10 +80,13 @@ const tickets = [
 
 async function Tickets() {
 
-    const data =await getTickets();
-    console.log(data)
-    console.log(data)
-    
+
+    const data = await getTickets();
+
+    if(!data) return( <div>Ocurrio un error al pedir lo datos</div>)
+
+
+
     return (
         <div>
             <h1>Tickes</h1>
@@ -98,7 +101,7 @@ async function Tickets() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                {data?.data?.map((ticket,index) => (
+                    {data?.data?.map((ticket, index) => (
                         <TableRow key={index}>
                             <TableCell className="font-medium">{ticket.title}</TableCell>
                             <TableCell>{ticket.description}</TableCell>
@@ -107,7 +110,7 @@ async function Tickets() {
                         </TableRow>
                     ))}
                 </TableBody>
-               
+
             </Table>
         </div>
     );

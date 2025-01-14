@@ -38,7 +38,7 @@ export default function Sidebar() {
         {/* <h2 className="text-xl">Dashboard</h2> */}
         <ul className="mt-4 space-y-4">
           {LinksListSiderBar.map((link, index) => (
-            <li key={index}>
+            index !== 2 && (<li key={index}>
               {/* Si tiene subenlaces, usar Accordion */}
               { (link.subLinks && isOpen ) ? (
                 <Accordion type="single" collapsible>
@@ -70,7 +70,7 @@ export default function Sidebar() {
                   <span className={`${isOpen ? "inline" : "hidden"}`}>{link.name}</span>
                 </a>
               )}
-            </li>
+            </li>)
           ))}
         </ul>
       </div>
