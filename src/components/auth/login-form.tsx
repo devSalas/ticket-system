@@ -26,6 +26,8 @@ const formSchema = z.object({
 });
 
 export function LoginForm() {
+
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,7 +48,7 @@ export function LoginForm() {
     console.log(res)
 
     if (res?.ok) {
-      router.push("/admin");
+      router.push("/dashboard");
       router.refresh();
     } else {
       alert("Error al iniciar sesión");

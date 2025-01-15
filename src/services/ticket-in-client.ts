@@ -1,5 +1,6 @@
 import { baseUrlClient } from "@/lib/services/baseUrl";
 import { getSession } from "next-auth/react"
+import { useSession } from "next-auth/react";
 
 export const createTickets = async (newTicket: any) => {
     try {

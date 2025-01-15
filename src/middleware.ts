@@ -35,7 +35,7 @@ export async function middleware(req: NextRequest) {
     req, 
     secret: process.env.NEXTAUTH_SECRET 
   });
-
+  console.log("¿hay token?",token )
   // Si no hay token, redirigir al login
   if (!token) {
     // Guardar la URL original para redirigir después del login
@@ -46,7 +46,7 @@ export async function middleware(req: NextRequest) {
 
   // Opcional: Verificar roles específicos
   if (pathname.startsWith('/admin') && token.role !== 'admin') {
-    return NextResponse.redirect(new URL('/unauthorized', req.url));
+    return NextResponse.redirect(new URL('/', req.url));
   }
 
   return NextResponse.next();

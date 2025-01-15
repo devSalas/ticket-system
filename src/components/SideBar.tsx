@@ -4,6 +4,7 @@ import { Home, Ticket, Bell, ArrowRightToLine, ArrowLeftToLine } from "lucide-re
 import { Button } from "./ui/button"; // Suponiendo que tienes este componente Button
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "./ui/accordion"; // Importar componentes Accordion de ShadCN
 import { LinksListSiderBar } from "@/data/client/SideBarClient";
+import LogoutButton from "./logout-button";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +27,7 @@ export default function Sidebar() {
 
   return (
     <div
-      className={`${isOpen ? "w-64" : "w-16"} transition-all duration-300 bg-gray-800 text-white p-4 sticky left-0 top-0 h-screen`}
+      className={`${isOpen ? "w-64" : "w-16"} transition-all duration-300 bg-gray-800 text-white p-4 sticky left-0 top-0 h-screen flex flex-col gap-4`}
     >
       {/* Toggle Button */}
       <Button onClick={toggleSidebar} className="mb-4">
@@ -74,6 +75,9 @@ export default function Sidebar() {
           ))}
         </ul>
       </div>
+
+
+      <LogoutButton />
     </div>
   );
 }

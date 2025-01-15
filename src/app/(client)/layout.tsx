@@ -6,7 +6,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         <Sidebar />
         <div className="grow ">
             <div className="w-full h-full flex flex-col gap-y-[2px]">
-
+        
                 {children}
             </div>
         </div>
