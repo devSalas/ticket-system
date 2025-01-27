@@ -16,6 +16,9 @@ import {
 import { useToast } from "@/hooks/use-toast"
 import { getSession } from "next-auth/react"
 import { createTickets } from "@/services/ticket-in-client";
+import { useRouter } from "next/navigation";
+
+
 
 const formSchema = z.object({
     title: z.string().min(1, "El título es obligatorio"),
@@ -29,7 +32,7 @@ const formSchema = z.object({
 
 function CreateTicketForm() {
     const { toast } = useToast()
-
+    const router = useRouter();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -67,6 +70,8 @@ function CreateTicketForm() {
                 description: "El ticket se creó correctamente.",
                 variant: "default", // Puedes usar otras variantes como "success"
             });
+            router.push("/tickets")
+            
         } catch (error) {
             console.log(error)
         }

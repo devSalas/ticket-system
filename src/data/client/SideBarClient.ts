@@ -1,8 +1,9 @@
 export const LinksListSiderBar = [
     {
-        name: "Home",
-        url:"/"
+        name: "Dashboard",
+        url:"/dashboard"
     },
+    
     {
         name: "Tickets",
         url: "/tickets",
@@ -16,9 +17,5 @@ export const LinksListSiderBar = [
                 url:"/tickets/create"
             }
         ]
-    },
-    {
-        name:"notificaciones",
-        url:"/notify"
     }
 ]

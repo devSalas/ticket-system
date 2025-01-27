@@ -1,15 +1,23 @@
+import AdminTicketTable from "@/components/admin/AdminTicketTable";
+import { Input } from "@/components/ui/input";
 import { getTickets } from "@/lib/services/tickets";
+import { Filter, Search } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
-export default function TicketsPage() {
-  const tickets = getTickets();
-  console.log({ tickets });
+type SearchParams = Promise<{ query: string | undefined }>
+ 
+export default async function TicketsPage({searchParams}: {
+  searchParams: SearchParams
+}) {
+  const {query} = (await searchParams) 
+ 
 
   return (
-      <div>
-        <div className="max-w-7xl m-auto">
-        <h1 className="text-center ">Lista de Tickets</h1>
-        </div>
+    <div className=" min-h-screen p-[100px]">
+      <div className="flex flex-col gap-8">
+        <AdminTicketTable search={query}  />
       </div>
+    </div>
   )
 }

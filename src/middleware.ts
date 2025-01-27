@@ -1,66 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-// Rutas que serán públicas
-const publicRoutes = [
-  "/auth/login",
-  "/auth/register",
-  "/api/auth",
-  "/",                // Homepage
-  "/about",           // Ejemplo de página pública
-  "/contact",         // Ejemplo de página pública
-];
-
-// Rutas que comienzan con estos prefijos serán públicas
-const publicPathPrefixes = [
-  "/_next",          // Archivos del sistema Next.js
-  "/images",         // Ejemplo para archivos estáticos
-  "/favicon",        // Favicon y relacionados
-  "/api/auth",       // Endpoints de autenticación
-];
-
-export async function middleware(req: NextRequest) {
+export async function middleware(req:NextRequest) {
   const { pathname } = req.nextUrl;
-  
-  // Verificar si la ruta actual es pública
-  const isPublicRoute = publicRoutes.includes(pathname) ||
-    publicPathPrefixes.some(prefix => pathname.startsWith(prefix));
 
-  if (isPublicRoute) {
-    return NextResponse.next();
-  }
+  // Obtener el token de autenticación
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  // Verificar el token de autenticación
-  const token = await getToken({ 
-    req, 
-    secret: process.env.NEXTAUTH_SECRET 
-  });
-  console.log("¿hay token?",token )
   // Si no hay token, redirigir al login
   if (!token) {
-    // Guardar la URL original para redirigir después del login
-    const url = new URL('/auth/login', req.url);
-    url.searchParams.set('callbackUrl', encodeURI(pathname));
-    return NextResponse.redirect(url);
+    const loginUrl = new URL("/auth/login", req.url);
+    loginUrl.searchParams.set("callbackUrl", req.nextUrl.pathname); // Guardar URL original
+    return NextResponse.redirect(loginUrl);
   }
 
-  // Opcional: Verificar roles específicos
-  if (pathname.startsWith('/admin') && token.role !== 'admin') {
-    return NextResponse.redirect(new URL('/', req.url));
+  // Si el usuario está autenticado y se encuentra en la raíz "/", redirigir según su rol
+  if (pathname === "/" && token.role) {
+    const redirectUrl = token.role === "admin" 
+      ? "/admin" 
+      : "/dashboard";
+    return NextResponse.redirect(new URL(redirectUrl, req.url));
   }
 
+  // Validar el acceso a rutas que comienzan con /admin
+  if (pathname.startsWith("/admin") && token.role !== "admin") {
+    // Si el usuario no es admin, redirigir al dashboard de cliente
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
+  // Permitir el acceso si pasa todas las validaciones
   return NextResponse.next();
 }
 
+// Configuración del matcher para proteger las rutas específicas
 export const config = {
   matcher: [
-    /*
-     * Coincide con todas las rutas excepto:
-     * 1. /api/auth* (endpoints de autenticación)
-     * 2. /_next/static (archivos estáticos)
-     * 3. /_next/image (optimización de imágenes)
-     * 4. /favicon.ico (favicon)
-     */
-    '/((?!api/auth|_next/static|_next/image|favicon.ico).*)',
+    "/admin/:path*", // Proteger todas las rutas que comienzan con /admin
+    "/",             // Validar redirección desde la raíz según el rol
   ],
 };

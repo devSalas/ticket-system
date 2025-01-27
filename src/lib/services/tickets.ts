@@ -7,7 +7,8 @@ import { options } from "../next-auth/options";
 
 
 export const getUserTickets = async () => {
-  const session = await getServerSession(options);
+  try {
+    const session = await getServerSession(options);
   console.log(`Bearer ${session?.user.id}`)
   const res = await fetch(`${baseUrl}/users/${session?.user.id}/tickets`, {
     method: "GET",
@@ -18,13 +19,24 @@ export const getUserTickets = async () => {
     },
   });
   const json = await res.json();
-  console.log("respuesta",json)
   return json;
+  } catch (error) {
+    return false
+  }
 };
-export const getTickets = async () => {
+
+
+export const getTickets = async (search:string | undefined) => {
+
+  try {
+    let url;
   const session = await getServerSession(options);
-  console.log(`Bearer ${session?.user.id}`)
-  const res = await fetch(`${baseUrl}/users/${session?.user.id}/tickets`, {
+  if(!search){
+    url=`${baseUrl}/tickets`
+  }else{
+    url = `${baseUrl}/tickets?search=${search}&page=${1}`
+  }
+  const res = await fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -32,9 +44,17 @@ export const getTickets = async () => {
       Authorization: `Bearer ${session?.user.accessToken}`,
     },
   });
+
   const json = await res.json();
-  console.log("respuesta",json)
-  return json;
+  if(!(json.success)){
+    return false
+  }else{
+    return json;
+  }
+
+  } catch (error) {
+    return false
+  }
 };
 
 
